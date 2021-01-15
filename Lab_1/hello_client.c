@@ -15,6 +15,7 @@
 
 int main(int argc, char *argv[]) {
 
+    // Allows testing simultaneous connections on server.
     sleep(2);
 
     struct addrinfo hints, *address_info_head, *address_info;
