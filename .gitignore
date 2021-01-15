@@ -1,5 +1,5 @@
 Intro/*
-.vscode/
+**/.vscode/
 
 # Ignore executable output from make
 *
