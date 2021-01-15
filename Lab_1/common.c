@@ -42,13 +42,6 @@ int send_message(int socket, char *buffer, int *size, int flags) {
     return current == -1 ? -1 : 0;
 }
 
-// int recv_error_checking(int socket, char *buffer, int size, int flags) {
-//     ssize_t receive_count = recv(socket, buffer, size, flags);
-//     if (receive_count == -1) {
-
-//     }
-// }
-
 int recv_check(ssize_t receive_count) {
     if (receive_count == -1) {
         fprintf(stderr, "Could not receive data\n");

@@ -47,42 +47,49 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    struct sockaddr_in client_address;
-    socklen_t client_address_length = sizeof(client_address);
+    while (true) {
+        printf("Waiting for next connection...\n");
+        struct sockaddr_in client_address;
+        socklen_t client_address_length = sizeof(client_address);
 
-    int connection_file_descriptor = accept(listening_file_descriptor, (struct sockaddr *) &client_address, &client_address_length);
-    if (connection_file_descriptor == -1) {
-        // Error
-        fprintf(stderr, "Could not accept connection.\n");
-        exit(EXIT_FAILURE);
+        int connection_file_descriptor = accept(listening_file_descriptor, (struct sockaddr *) &client_address, &client_address_length);
+        if (connection_file_descriptor == -1) {
+            // Error
+            fprintf(stderr, "Could not accept connection.\n");
+            exit(EXIT_FAILURE);
+        }
+        // Connected Successfully.
+
+        int flags = 0; // No flags set
+
+        if (recv_message(connection_file_descriptor, flags) == -1) {
+            // Couldn't receive whole message
+            fprintf(stderr, "Error when receiving data\n");
+            closeSockets(listening_file_descriptor, connection_file_descriptor);
+            exit(EXIT_FAILURE);
+        }
+
+        char *data = "Hello, client!";
+        int data_len = strlen(data);
+        int send_flags = MSG_NOSIGNAL;
+
+        if (send_message(connection_file_descriptor, data, &data_len, send_flags) == -1) {
+            // Error
+            fprintf(stderr, "Error when sending data.\nOnly sent %d bytes!\n", data_len);
+            closeSockets(listening_file_descriptor, connection_file_descriptor);
+            exit(EXIT_FAILURE);
+        }
+
+        // Final recv call to wait for client to close socket first
+        char buffer[MAX_MSG_SIZE];
+        if (recv(connection_file_descriptor, buffer, MAX_MSG_SIZE, 0) != 0) {
+            // Expecting socket close
+            fprintf(stderr, "Error: Client should have closed socket not sent new message");
+            closeSockets(listening_file_descriptor, connection_file_descriptor);
+            exit(EXIT_FAILURE);
+        }
+
+        close(connection_file_descriptor);
+        printf("Closed connection.\n");
     }
-
-    int flags = 0; // No flags set
-
-    if (recv_message(connection_file_descriptor, flags) == -1) {
-        // Couldn't receive whole message
-        fprintf(stderr, "Error when receiving data\n");
-        closeSockets(listening_file_descriptor, connection_file_descriptor);
-        exit(EXIT_FAILURE);
-    }
-
-    char *data = "Hello, client!";
-    int data_len = strlen(data);
-    int send_flags = MSG_NOSIGNAL;
-
-    if (send_message(connection_file_descriptor, data, &data_len, send_flags) == -1) {
-        // Error
-        fprintf(stderr, "Error when sending data.\nOnly sent %d bytes!\n", data_len);
-        closeSockets(listening_file_descriptor, connection_file_descriptor);
-        exit(EXIT_FAILURE);
-    }
-
-    // Final recv call to wait for client to close socket first
-    char buffer[MAX_MSG_SIZE];
-    if (recv(connection_file_descriptor, buffer, MAX_MSG_SIZE, 0) != 0) {
-        // Expecting socket close
-        fprintf(stderr, "Error: Client should have closed socket not sent new message");
-    }
-
-    closeSockets(listening_file_descriptor, connection_file_descriptor);
 }

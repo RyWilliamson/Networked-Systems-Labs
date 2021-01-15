@@ -15,6 +15,8 @@
 
 int main(int argc, char *argv[]) {
 
+    sleep(2);
+
     struct addrinfo hints, *address_info_head, *address_info;
     int i;
     int file_descriptor;
