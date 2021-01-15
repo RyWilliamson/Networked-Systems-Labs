@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     char * ip_string;
 
     if (argc < 2) {
-        printf("Must provide IP argument\n");
+        fprintf(stderr, "Usage: hello_client <hostname>\n");
         exit(EXIT_FAILURE);
     }
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     // Performs the dns lookup - head of linked list with possible addresses is set to address_info_head
     if ((i = getaddrinfo(ip_string, PORT_STR, &hints, &address_info_head)) != 0) {
         // Error
-        printf("Could not find address for %s. Make sure the address was typed correctly.\n", ip_string);
+        fprintf(stderr, "Could not find address for %s. Make sure the address was typed correctly.\n", ip_string);
         exit(EXIT_FAILURE);
     }
 
@@ -56,23 +56,31 @@ int main(int argc, char *argv[]) {
     }
 
     if (address_info == NULL) {
-        printf("Could not connect to %s\n", ip_string);
+        fprintf(stderr, "Could not connect to %s\n", ip_string);
         exit(EXIT_FAILURE);
     }
 
     // Successfully connected to server so can now use the connection
-    char data[5000];
-    for (int i = 0; i < 5000 - 1; i++) {
+    char data[MAX_DATA_SIZE];
+    for (int i = 0; i < MAX_DATA_SIZE - 1; i++) {
         data[i] = 'a';
     }
-    data[4999] = '\0';
+    data[MAX_DATA_SIZE - 1] = '\0';
     int data_len = strlen(data);
-    int flags = MSG_NOSIGNAL;
+    int send_flags = MSG_NOSIGNAL;
 
-    if (send_all(file_descriptor, data, &data_len, flags) == -1) {
+    if (send_message(file_descriptor, data, &data_len, send_flags) == -1) {
         // Error
-        printf("Error when sending data to %s\n", ip_string);
-        printf("Only sent %d bytes!\n", data_len);
+        fprintf(stderr, "Error when sending data to %s\nOnly sent %d bytes!\n",
+            ip_string, data_len);
+        close(file_descriptor);
+        exit(EXIT_FAILURE);
+    }
+
+    int recv_flags = 0;
+    if (recv_message(file_descriptor, recv_flags)) {
+        fprintf(stderr, "Error when receiving data from %s\n", ip_string);
+        close(file_descriptor);
         exit(EXIT_FAILURE);
     }
 
