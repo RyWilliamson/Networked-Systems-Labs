@@ -66,12 +66,13 @@ int main(int argc, char *argv[]) {
         data[i] = 'a';
     }
     data[4999] = '\0';
-    size_t data_len = strlen(data);
+    int data_len = strlen(data);
     int flags = MSG_NOSIGNAL;
 
-    if (send(file_descriptor, data, data_len, flags) == -1) {
+    if (send_all(file_descriptor, data, &data_len, flags) == -1) {
         // Error
-        printf("Could not send data to %s\n", ip_string);
+        printf("Error when sending data to %s\n", ip_string);
+        printf("Only sent %d bytes!\n", data_len);
         exit(EXIT_FAILURE);
     }
 
