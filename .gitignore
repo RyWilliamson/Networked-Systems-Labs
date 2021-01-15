@@ -1,0 +1,11 @@
+Intro/*
+.vscode/
+
+# Ignore executable output from make
+*
+!/**/
+!*.*
+!Makefile
+
+*.o
+*.pdf
