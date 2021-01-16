@@ -13,6 +13,6 @@ int send_message(int socket, char *buffer, int *size, int flags);
 int recv_message(int socket, int flags);
 
 /* Logs the given times for debug */
-void print_time(struct timespec *before, struct timespec *after);
+void print_times(struct timespec *before, struct timespec *after);
 
 #endif

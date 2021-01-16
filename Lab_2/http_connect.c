@@ -1,4 +1,4 @@
-#define _GNU_SOURCE // Needed or vscode complains about things from netdb.h not being defined.
+#define _GNU_SOURCE // Needed or vscode complains about things from netdb.h and time.h not being defined.
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -61,7 +61,8 @@ int main(int argc, char *argv[]) {
         break; // Successful connection
     }
 
-    print_time(&before_connect, &after_connect);
+    printf("Setup time:\n");
+    print_times(&before_connect, &after_connect);
 
     if (address_info == NULL) {
         fprintf(stderr, "Could not connect to %s\n", ip_string);
