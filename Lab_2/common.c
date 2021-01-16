@@ -7,6 +7,11 @@
 
 #include "common.h"
 
+void print_time(struct timespec *before, struct timespec *after) {
+    printf("before: %ld.%09ld\n", (long) before->tv_sec, before->tv_nsec);
+    printf("after: %ld.%09ld\n", (long) after->tv_sec, after->tv_nsec);
+}
+
 int send_message(int socket, char *buffer, int *size, int flags) {
     // Pointer as the return value is an error, so we pass bytes 
     // sent to the size memory address.
@@ -41,7 +46,7 @@ int recv_check(ssize_t receive_count) {
     if (receive_count == 0) {
         // Client closed connection because return value of 0 (Can't send zero data!)
         printf("\n");
-        fprintf(stderr, "Client Closed Connection\n");
+        printf("Client Closed Connection\n");
         return 0;
     }
     return 1;

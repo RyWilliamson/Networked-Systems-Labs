@@ -10,13 +10,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "common.h"
 
 int main(int argc, char *argv[]) {
 
-    // Allows testing simultaneous connections on server.
-    sleep(2);
+    struct timespec before_connect;
+    struct timespec after_connect;
 
     struct addrinfo hints, *address_info_head, *address_info;
     int i;
@@ -50,13 +51,17 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
+        clock_gettime(CLOCK_MONOTONIC, &before_connect);
         if (connect(file_descriptor, address_info->ai_addr, address_info->ai_addrlen) == -1) {
             // Can't connect to address. Try next node
             close(file_descriptor);
             continue;
         }
+        clock_gettime(CLOCK_MONOTONIC, &after_connect);
         break; // Successful connection
     }
+
+    print_time(&before_connect, &after_connect);
 
     if (address_info == NULL) {
         fprintf(stderr, "Could not connect to %s\n", ip_string);
