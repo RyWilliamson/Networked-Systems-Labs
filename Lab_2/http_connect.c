@@ -51,44 +51,43 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
+        print_ip(address_info->ai_family, address_info->ai_addr);
+
         clock_gettime(CLOCK_MONOTONIC, &before_connect);
         if (connect(file_descriptor, address_info->ai_addr, address_info->ai_addrlen) == -1) {
             // Can't connect to address. Try next node
+            printf("Can't connect!\n");
             close(file_descriptor);
             continue;
         }
         clock_gettime(CLOCK_MONOTONIC, &after_connect);
-        break; // Successful connection
-    }
+        
+        // An address that works
+        printf("Setup time\n");
+        print_times(&before_connect, &after_connect);
 
-    printf("Setup time:\n");
-    print_times(&before_connect, &after_connect);
+        // Successfully connected to server so can now use the connection
+        char data[MAX_DATA_SIZE];
+        sprintf(data, "GET / HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", ip_string);
+        int data_len = strlen(data);
+        int send_flags = MSG_NOSIGNAL;
 
-    if (address_info == NULL) {
-        fprintf(stderr, "Could not connect to %s\n", ip_string);
-        exit(EXIT_FAILURE);
-    }
+        if (send_message(file_descriptor, data, &data_len, send_flags) == -1) {
+            // Error
+            fprintf(stderr, "Error when sending data to %s\nOnly sent %d bytes!\n",
+                ip_string, data_len);
+            close(file_descriptor);
+            exit(EXIT_FAILURE);
+        }
 
-    // Successfully connected to server so can now use the connection
-    char data[MAX_DATA_SIZE];
-    sprintf(data, "GET / HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", ip_string);
-    int data_len = strlen(data);
-    int send_flags = MSG_NOSIGNAL;
+        int recv_flags = 0;
+        if (recv_message(file_descriptor, recv_flags) == -1) {
+            fprintf(stderr, "Error when receiving data from %s\n", ip_string);
+            close(file_descriptor);
+            exit(EXIT_FAILURE);
+        }
 
-    if (send_message(file_descriptor, data, &data_len, send_flags) == -1) {
-        // Error
-        fprintf(stderr, "Error when sending data to %s\nOnly sent %d bytes!\n",
-            ip_string, data_len);
         close(file_descriptor);
-        exit(EXIT_FAILURE);
+        printf("\n");
     }
-
-    int recv_flags = 0;
-    if (recv_message(file_descriptor, recv_flags) == -1) {
-        fprintf(stderr, "Error when receiving data from %s\n", ip_string);
-        close(file_descriptor);
-        exit(EXIT_FAILURE);
-    }
-
-    close(file_descriptor);
 }

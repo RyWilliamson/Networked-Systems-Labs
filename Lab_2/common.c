@@ -2,12 +2,27 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
 
 #include "common.h"
+
+void print_ip(int family, struct sockaddr *ip_info) {
+    if (family == AF_INET) {
+        struct sockaddr_in *info = (struct sockaddr_in *) ip_info;
+        char buffer[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &info->sin_addr, buffer, INET_ADDRSTRLEN);
+        printf("IP address is: %s\n", buffer);
+    } else {
+        struct sockaddr_in6 *info = (struct sockaddr_in6 *) ip_info;
+        char buffer[INET6_ADDRSTRLEN];
+        inet_ntop(AF_INET6, &info->sin6_addr, buffer, INET6_ADDRSTRLEN);
+        printf("IP address is: %s\n", buffer);
+    }
+}
 
 void print_time(char const* label, struct timespec *time) {
     printf("%s: %ld.%09ld\n", label, (long) time->tv_sec, time->tv_nsec);

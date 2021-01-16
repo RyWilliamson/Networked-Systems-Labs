@@ -2,6 +2,7 @@
 #define MYCOMMON
 
 #include <time.h>
+#include <sys/socket.h>
 
 #define PORT_STR "80"
 #define MAX_DATA_SIZE 5000
@@ -14,5 +15,8 @@ int recv_message(int socket, int flags);
 
 /* Logs the given times for debug */
 void print_times(struct timespec *before, struct timespec *after);
+
+/* Prints the IP address */
+void print_ip(int family, struct sockaddr *ip_info);
 
 #endif
