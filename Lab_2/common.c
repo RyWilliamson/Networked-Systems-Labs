@@ -24,6 +24,17 @@ void print_ip(int family, struct sockaddr *ip_info) {
     }
 }
 
+void subtract_times(struct timespec *result, struct timespec *before, struct timespec *after) {
+    result->tv_sec = after->tv_sec - before->tv_sec;
+    long nsec = after->tv_nsec - before->tv_nsec;
+    if (nsec < 0) {
+        result->tv_sec--;
+        result->tv_nsec = 1000000000 - nsec;
+    } else {
+        result->tv_nsec = nsec;
+    }
+}
+
 void print_time(char const* label, struct timespec *time) {
     printf("%s: %ld.%09ld\n", label, (long) time->tv_sec, time->tv_nsec);
 }
@@ -31,6 +42,10 @@ void print_time(char const* label, struct timespec *time) {
 void print_times(struct timespec *before, struct timespec *after) {
     print_time("Before", before);
     print_time("After", after);
+    struct timespec result;
+    subtract_times(&result, before, after);
+    print_time("Duration", &result);
+    printf("\n");
 }
 
 int send_message(int socket, char *buffer, int *size, int flags) {
