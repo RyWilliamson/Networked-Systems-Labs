@@ -1,5 +1,6 @@
 Intro/*
 **/.vscode/
+processed_output/*
 
 # Ignore executable output from make
 *
