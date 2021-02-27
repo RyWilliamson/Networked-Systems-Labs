@@ -1,0 +1,1 @@
+./dnslookup www.cam.ac.uk www.uam.es www.gisma.com google.co.uk www.coolblue.nl www.ozsale.com.au facebook.com www.imqq.com twitter.com www.stuff.co.nz indianexpress.com www.japantimes.co.jp everywhereist.com blogs.klaskameraad.co.za www.profseema.com

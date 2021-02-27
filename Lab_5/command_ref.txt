@@ -1,0 +1,15 @@
+Remove square brackets and put in websites separated by spaces
+./dnslookup [hostname1 hostname2, ...] > results.txt
+
+ssh 2306841w@sibu.dcs.gla.ac.uk
+ssh 2306841w@stlinux02.dcs.gla.ac.uk
+
+To copy from local to server use:
+scp -rp -o ProxyCommand="ssh 2306841w@sibu.dcs.gla.ac.uk nc stlinux02.dcs.gla.ac.uk 22" <local_path> 2306841w@stlinux02.dcs.gla.ac.uk:<remote_path>
+
+To copy from server to local use:
+scp -rp -o ProxyCommand="ssh 2306841w@sibu.dcs.gla.ac.uk nc stlinux02.dcs.gla.ac.uk 22" 2306841w@stlinux02.dcs.gla.ac.uk:<remote_path> <local_path>
+
+dot -T pdf -o ../../../router-topology-v4.pdf router-topology-v4.dot
+
+password is last 8 numbers from student id

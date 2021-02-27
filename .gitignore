@@ -1,6 +1,5 @@
 Intro/*
 **/.vscode/
-processed_output/*
 
 # Ignore executable output from make
 *
@@ -10,3 +9,4 @@ processed_output/*
 
 *.o
 *.pdf
+*.xlsx
