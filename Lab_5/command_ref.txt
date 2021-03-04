@@ -10,6 +10,9 @@ scp -rp -o ProxyCommand="ssh 2306841w@sibu.dcs.gla.ac.uk nc stlinux02.dcs.gla.ac
 To copy from server to local use:
 scp -rp -o ProxyCommand="ssh 2306841w@sibu.dcs.gla.ac.uk nc stlinux02.dcs.gla.ac.uk 22" 2306841w@stlinux02.dcs.gla.ac.uk:<remote_path> <local_path>
 
-dot -T pdf -o ../../../router-topology-v4.pdf router-topology-v4.dot
+scp -rp -o ProxyCommand="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1 2306841w@sibu.dcs.gla.ac.uk nc stlinux02.dcs.gla.ac.uk 22" 2306841w@stlinux02.dcs.gla.ac.uk:router-topology-v4.pdf router-topology-v4.pdf
+
+dot -T pdf -o ../router-topology-v4.pdf processed_output/processed/router-topology-v4.dot
+dot -T pdf -o ../router-topology-v6.pdf processed_output/processed/router-topology-v6.dot
 
 password is last 8 numbers from student id
